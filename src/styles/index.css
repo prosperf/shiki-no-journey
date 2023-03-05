@@ -6,4 +6,8 @@
   h1 {
     @apply text-6xl;
   }
+
+  html {
+    @apply text-white/[.9];
+  }
 }

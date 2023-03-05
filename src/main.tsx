@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import Root from "./Root";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
-import "./index.css";
+import "./styles/index.css";
 import ErrorPage from "./ErrorPage";
-import { Story } from "./Story";
+import { StoryIndex } from "./Stories/StoryIndex";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/stories/:storyId",
-        element: <Story />,
+        element: <StoryIndex />,
       },
     ],
   },

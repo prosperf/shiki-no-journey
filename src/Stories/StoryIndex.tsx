@@ -1,11 +1,14 @@
 import { addDoc, collection, getDocs } from "firebase/firestore/lite";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../utils/firebase";
+import { db } from "../../utils/firebase";
 import dompurify from "dompurify";
+import { StoryContainer } from "./StoryContainer";
+import { StoryCreator } from "./StoryCreator";
 
-export const Story = () => {
+export const StoryIndex = () => {
   const [story, setStory] = useState({ date: "", body: "" });
+
   useEffect(() => {
     getDocs(
       collection(db, "stories", "two-lilies-entertwined", "entries")
@@ -17,12 +20,16 @@ export const Story = () => {
     });
   }, []);
   const { storyId } = useParams();
+
   return (
     <div>
-      <h1>{story.date}</h1>
-      <div
-        dangerouslySetInnerHTML={{ __html: dompurify.sanitize(story.body) }}
-      />
+      <StoryContainer>
+        <h1>{story.date}</h1>
+        <div
+          dangerouslySetInnerHTML={{ __html: dompurify.sanitize(story.body) }}
+        />
+      </StoryContainer>
+      <StoryCreator />
     </div>
   );
 };

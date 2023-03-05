@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore/lite";
 
 import { getAnalytics } from "firebase/analytics";
+import { GoogleAuthProvider, getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -37,3 +38,8 @@ export const analytics = getAnalytics(app);
 
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
+
+//Authentication setup
+export const provider = new GoogleAuthProvider();
+const auth = getAuth();
+auth.useDeviceLanguage(); // set authentication language to user preference
