@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { CommandPrompt } from "./CommandPrompt";
 import { GlitchDiv } from "./GlitchDiv";
 
 function Root() {
   const [showCommandPompt, setShowCommandPrompt] = useState(false);
+  const [on, setOn] = useState(false);
+  const location = useLocation();
 
   //listen for ctrl + alt + t
   useEffect(() => {

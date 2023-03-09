@@ -4,101 +4,13 @@ import menuGlitchImage from "./assets/menuglitch.png";
 import menuGlitchGif from "./assets/glitchmenu.gif";
 import { ReactComponent as Close } from "./assets/close.svg";
 import { useIsMd } from "./hooks/utils";
+import { useNavigate } from "react-router-dom";
+import { gridGenerator, scrambleArray } from "../utils/randomizers";
 
 export const GlitchDiv = () => {
   const [animateState, setAnimateState] = useState("closed");
+  const navigate = useNavigate();
   const isMedium = useIsMd();
-  const positions = [
-    { x: 0, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-    { x: 1, y: 0 },
-    { x: 2, y: 0 },
-    { x: 2, y: 2 },
-    { x: 2, y: 1 },
-    { x: 1, y: 2 },
-    { x: 0, y: 2 },
-    { x: 3, y: 1 },
-    { x: 0, y: 3 },
-    { x: 2, y: 3 },
-    { x: 3, y: 2 },
-    { x: 3, y: 3 },
-    { x: 1, y: 3 },
-    { x: 3, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 2 },
-    { x: 1, y: 4 },
-    { x: 4, y: 4 },
-    { x: 3, y: 4 },
-    { x: 4, y: 1 },
-    { x: 0, y: 4 },
-    { x: 2, y: 4 },
-    { x: 4, y: 3 },
-    { x: 0, y: 5 },
-    { x: 3, y: 5 },
-    { x: 1, y: 6 },
-    { x: 4, y: 5 },
-    { x: 2, y: 6 },
-    { x: 0, y: 6 },
-    { x: 4, y: 6 },
-    { x: 2, y: 5 },
-    { x: 3, y: 6 },
-    { x: 1, y: 5 },
-    { x: 4, y: 8 },
-    { x: 2, y: 7 },
-    { x: 3, y: 8 },
-    { x: 0, y: 7 },
-    { x: 3, y: 7 },
-    { x: 1, y: 8 },
-    { x: 4, y: 7 },
-    { x: 2, y: 8 },
-    { x: 1, y: 7 },
-    { x: 0, y: 8 },
-
-    { x: 0, y: 9 },
-    { x: 3, y: 9 },
-    { x: 1, y: 10 },
-    { x: 4, y: 9 },
-    { x: 2, y: 10 },
-    { x: 0, y: 10 },
-    { x: 4, y: 10 },
-    { x: 2, y: 9 },
-    { x: 3, y: 10 },
-    { x: 1, y: 9 },
-
-    { x: 4, y: 12 },
-    { x: 2, y: 11 },
-    { x: 3, y: 12 },
-    { x: 0, y: 11 },
-    { x: 3, y: 11 },
-    { x: 1, y: 12 },
-    { x: 4, y: 11 },
-    { x: 2, y: 12 },
-    { x: 1, y: 11 },
-    { x: 0, y: 12 },
-
-    { x: 0, y: 14 },
-    { x: 3, y: 14 },
-    { x: 1, y: 13 },
-    { x: 4, y: 14 },
-    { x: 2, y: 13 },
-    { x: 0, y: 13 },
-    { x: 4, y: 13 },
-    { x: 2, y: 14 },
-    { x: 3, y: 13 },
-    { x: 1, y: 14 },
-
-    { x: 0, y: 15 },
-    { x: 3, y: 15 },
-    { x: 1, y: 16 },
-    { x: 4, y: 15 },
-    { x: 2, y: 16 },
-    { x: 0, y: 16 },
-    { x: 4, y: 16 },
-    { x: 2, y: 15 },
-    { x: 3, y: 16 },
-    { x: 1, y: 15 },
-  ];
 
   const boxVariant = isMedium
     ? {
@@ -223,7 +135,7 @@ export const GlitchDiv = () => {
       animate={animateState}
       variants={rootVariant}
     >
-      {positions.map(({ x, y }, i) => (
+      {gridGenerator(5, 20, "corner").map(({ x, y }, i) => (
         <motion.div
           className="absolute w-[21vw] sm:w-14 aspect-square top-0 left-0 bg-black opacity-0"
           variants={boxVariant}
@@ -244,6 +156,7 @@ export const GlitchDiv = () => {
         <motion.button
           variants={itemVariant}
           className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+          onClick={() => navigate("stories/two-lilies-entertwined")}
         >
           Hello Dog
         </motion.button>
@@ -274,7 +187,6 @@ export const GlitchDiv = () => {
           className="absolute left-0 top-0 w-8 h-8 cursor-pointer"
           onClick={() => {
             setAnimateState(animateState == "closed" ? "opened" : "closed");
-            console.log(animateState);
           }}
         />
       </motion.div>

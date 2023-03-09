@@ -8,6 +8,7 @@ import { StoryCreator } from "./StoryCreator";
 import { getAuth, User } from "firebase/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { AnimatedPage } from "../AnimatedPage";
 
 //NOTE: Need to catch when a story does not exist
 
@@ -45,7 +46,7 @@ export const StoryIndex = () => {
   });
 
   return (
-    <div>
+    <AnimatedPage>
       {stories &&
         stories.docs.map((story, index) => (
           <StoryContainer key={index}>
@@ -58,6 +59,6 @@ export const StoryIndex = () => {
         ))}
 
       {showEditor && <StoryCreator />}
-    </div>
+    </AnimatedPage>
   );
 };
