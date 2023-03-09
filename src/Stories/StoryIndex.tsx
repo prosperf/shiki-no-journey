@@ -1,17 +1,28 @@
-import { addDoc, collection, getDocs } from "firebase/firestore/lite";
+import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { auth, db } from "../../utils/firebase";
+import { app, auth, db } from "../../utils/firebase";
 import dompurify from "dompurify";
 import { StoryContainer } from "./StoryContainer";
 import { StoryCreator } from "./StoryCreator";
 import { getAuth, User } from "firebase/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
+import { useCollection } from "react-firebase-hooks/firestore";
+
+//NOTE: Need to catch when a story does not exist
 
 export const StoryIndex = () => {
-  const [stories, setStories] = useState([""]);
+  //const [stories, setStories] = useState([""]);
   const [showEditor, setShowEditor] = useState(false);
   const { storyId } = useParams();
+  const [stories, storiesLoading, storiesError] = useCollection(
+    collection(db, "stories", storyId!, "entries")
+  );
+
+  useEffect(() => {
+    if (stories && stories.empty)
+      throw new Response("Not Found", { status: 404 });
+  }, [stories]);
 
   //Tracks user sign in status and if user is an admin or not
   useIdToken(auth, {
@@ -33,23 +44,18 @@ export const StoryIndex = () => {
     },
   });
 
-  useEffect(() => {
-    getDocs(
-      collection(db, "stories", "two-lilies-entertwined", "entries")
-    ).then((data) => {
-      setStories(data.docs.map((story) => story.data().body));
-    });
-  }, []);
-
   return (
     <div>
-      {stories.map((story) => (
-        <StoryContainer>
-          <div
-            dangerouslySetInnerHTML={{ __html: dompurify.sanitize(story) }}
-          ></div>
-        </StoryContainer>
-      ))}
+      {stories &&
+        stories.docs.map((story, index) => (
+          <StoryContainer key={index}>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: dompurify.sanitize(story.data().body),
+              }}
+            ></div>
+          </StoryContainer>
+        ))}
 
       {showEditor && <StoryCreator />}
     </div>

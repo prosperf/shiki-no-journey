@@ -7,10 +7,11 @@ import {
   collection,
   getDocs,
   serverTimestamp,
-} from "firebase/firestore/lite";
+} from "firebase/firestore";
 import { useParams } from "react-router-dom";
-import { db } from "../../utils/firebase";
+import { auth, db } from "../../utils/firebase";
 import dompurify from "dompurify";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export const StoryCreator = () => {
   const [quillText, setQuillText] = useState("");
@@ -18,6 +19,7 @@ export const StoryCreator = () => {
   const [day, setDay] = useState(0);
   const [year, setYear] = useState(0);
   const { storyId } = useParams();
+  const [user] = useAuthState(auth);
 
   const modules = {
     toolbar: [
@@ -55,9 +57,16 @@ export const StoryCreator = () => {
       body: dompurify.sanitize(quillText),
       date: month !== 0 && day !== 0 ? new Date(year, month - 1, day) : null,
       timestamp: serverTimestamp(),
+      users: {
+        owner: user!.uid,
+      },
     })
       .then((response) => {
         console.log(response);
+        setQuillText("");
+        setDay(0);
+        setMonth(0);
+        setYear(0);
       })
       .catch((error) => {
         console.log(error);
