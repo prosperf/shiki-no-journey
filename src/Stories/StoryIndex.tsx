@@ -26,7 +26,7 @@ export const StoryIndex = () => {
   }, [stories]);
 
   //Tracks user sign in status and if user is an admin or not
-  useIdToken(auth, {
+  const [user] = useIdToken(auth, {
     onUserChanged: (user) => {
       return user
         ? user
@@ -46,7 +46,7 @@ export const StoryIndex = () => {
   });
 
   return (
-    <AnimatedPage>
+    <div>
       {stories &&
         stories.docs.map((story, index) => (
           <StoryContainer key={index}>
@@ -55,10 +55,15 @@ export const StoryIndex = () => {
                 __html: dompurify.sanitize(story.data().body),
               }}
             ></div>
+            {user && user.uid === story.data().users.owner && (
+              <div className="text-right text-cold-red">
+                REPLACE WITH EDIT BUTTON
+              </div>
+            )}
           </StoryContainer>
         ))}
 
       {showEditor && <StoryCreator />}
-    </AnimatedPage>
+    </div>
   );
 };

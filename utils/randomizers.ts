@@ -36,43 +36,45 @@ export const gridGenerator = (
     }
     return scrambleArray(positions);
   }
-
-  for (let i = 0; i < Math.min(x, y); i++) {
-    let x_poses = [];
-    let y_poses = [];
-    for (let j = 0; j < i * 2 + 1; j++) {
-      x_poses.push(i);
-      y_poses.push(i);
-    }
-
-    for (let j = 0; j < i; j++) {
-      x_poses[x_poses.length - 1 - j] -= i - j;
-      y_poses[j] -= i - j;
-    }
-
-    for (let j = 0; j < i * 2 + 1; j++) {
-      positions.push({ x: x_poses[j], y: y_poses[j] });
-    }
-  }
-
-  const lesser = x < y ? x : y;
-  const greater = x > y ? x : y;
-
-  if (greater !== lesser) {
-    if (greater === x) {
-      for (let i = lesser; i < x; i++) {
-        for (let j = 0; j < y; j++) {
-          positions.push({ x: i, y: j });
-        }
+  if (origin === "corner") {
+    for (let i = 0; i < Math.min(x, y); i++) {
+      let x_poses = [];
+      let y_poses = [];
+      for (let j = 0; j < i * 2 + 1; j++) {
+        x_poses.push(i);
+        y_poses.push(i);
       }
-    } else {
-      for (let i = lesser; i < y; i++) {
-        for (let j = 0; j < x; j++) {
-          positions.push({ x: j, y: i });
-        }
+
+      for (let j = 0; j < i; j++) {
+        x_poses[x_poses.length - 1 - j] -= i - j;
+        y_poses[j] -= i - j;
+      }
+
+      for (let j = 0; j < i * 2 + 1; j++) {
+        positions.push({ x: x_poses[j], y: y_poses[j] });
       }
     }
-  }
 
-  return scrambleArray(positions);
+    const lesser = x < y ? x : y;
+    const greater = x > y ? x : y;
+
+    if (greater !== lesser) {
+      if (greater === x) {
+        for (let i = lesser; i < x; i++) {
+          for (let j = 0; j < y; j++) {
+            positions.push({ x: i, y: j });
+          }
+        }
+      } else {
+        for (let i = lesser; i < y; i++) {
+          for (let j = 0; j < x; j++) {
+            positions.push({ x: j, y: i });
+          }
+        }
+      }
+    }
+
+    return scrambleArray(positions);
+  }
+  return [];
 };

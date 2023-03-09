@@ -1,5 +1,7 @@
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { AnimatedPage } from "./AnimatedPage";
 import { CommandPrompt } from "./CommandPrompt";
 import { GlitchDiv } from "./GlitchDiv";
 

@@ -144,19 +144,26 @@ export const GlitchDiv = () => {
         />
       ))}
       <motion.div
-        className="relative w-full h-full overflow-hidden"
+        className="relative w-full h-full overflow-hidden justify-center"
         variants={itemParentVariant}
       >
         <motion.button
           variants={itemVariant}
           className="mt-20 m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+          onClick={() => {
+            navigate("/");
+            setAnimateState("closed");
+          }}
         >
           Hello Dog
         </motion.button>
         <motion.button
           variants={itemVariant}
           className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-          onClick={() => navigate("stories/two-lilies-entertwined")}
+          onClick={() => {
+            navigate("stories/two-lilies-entertwined");
+            setAnimateState("closed");
+          }}
         >
           Hello Dog
         </motion.button>
