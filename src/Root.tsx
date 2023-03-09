@@ -22,7 +22,7 @@ function Root() {
   }, []);
 
   return (
-    <div className="h-screen font-mono flex items-center justify-center text-center p-8  bg-stone-900 bg-shikinocliff bg-cover max-w-full">
+    <div className="min-h-screen font-mono flex justify-center p-8  bg-stone-900 bg-shikinocliff bg-cover bg-fixed max-w-full">
       {showCommandPompt && (
         <CommandPrompt killFunction={() => setShowCommandPrompt(false)} />
       )}

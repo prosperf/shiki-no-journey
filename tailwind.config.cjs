@@ -11,6 +11,9 @@ module.exports = {
         shikinocliff: "url(https://i.ibb.co/RjTHYv6/shikinocliff.gif)",
         menuglitch: "url(./src/assets/menuglitch.png)",
       },
+      colors: {
+        "cold-red": "#770101",
+      },
     },
   },
 };

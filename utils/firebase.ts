@@ -41,5 +41,5 @@ export const db = getFirestore(app);
 
 //Authentication setup
 export const provider = new GoogleAuthProvider();
-const auth = getAuth();
+export const auth = getAuth();
 auth.useDeviceLanguage(); // set authentication language to user preference
