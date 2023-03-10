@@ -126,7 +126,7 @@ export const GlitchDiv = ({
 
   return (
     <motion.div
-      className="fixed left-0 top-0 w-8 h-8 overflow-hidden"
+      className="fixed left-0 top-0 w-8 h-8"
       animate={animateState}
       variants={rootVariant}
     >

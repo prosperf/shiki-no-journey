@@ -7,14 +7,17 @@ import { useIsMd } from "./hooks/utils";
 import { useNavigate } from "react-router-dom";
 import { gridGenerator, scrambleArray } from "../utils/randomizers";
 import { GlitchDiv } from "./GltichDiv";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { collection } from "firebase/firestore";
+import { db } from "../utils/firebase";
 
 export const SideBar = () => {
   const [animateState, setAnimateState] = useState<"closed" | "opened">(
     "closed"
   );
-  const [window3, setWindow3] = useState<"closed" | "opened">("closed");
-  const navigate = useNavigate();
-  const isMedium = useIsMd();
+  const [stories, storiesLoading, storiesError] = useCollection(
+    collection(db, "stories")
+  );
 
   const closeVariant = {
     closed: {
@@ -43,30 +46,6 @@ export const SideBar = () => {
     },
   };
 
-  const itemVariant = {
-    closed: {
-      opacity: 0,
-      transition: {
-        duration: 0,
-      },
-    },
-    opened: {
-      opacity: 1,
-    },
-  };
-
-  const tapShake = {
-    translateX: isMedium ? "0.5rem" : 0,
-    translateY: isMedium ? 0 : "0.5rem",
-    rotate: 0.25,
-    transition: {
-      type: "spring",
-      damping: 1,
-      mass: 0.1,
-      stiffness: 1000,
-    },
-  };
-
   //NOTE: NOT RESPONSIVE ENOUGH WORKS POORLY AT LOW ZOOM IE 4k
   return (
     <div>
@@ -75,37 +54,16 @@ export const SideBar = () => {
           className="relative w-full h-full overflow-hidden justify-center text-center"
           variants={itemParentVariant}
         >
-          <motion.button
-            variants={itemVariant}
-            className="mt-20 m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-            whileTap={{ scale: 1.1, transition: { type: "spring" } }}
-            onClick={() => {
-              navigate("/");
-              setAnimateState("closed");
-            }}
-          >
-            Hello Dog
-          </motion.button>
-          <motion.button
-            variants={itemVariant}
-            className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-            onClick={() => {
-              navigate("stories/two-lilies-entertwined");
-              setAnimateState("closed");
-            }}
-          >
-            Hello Dog
-          </motion.button>
-          <motion.button
-            variants={itemVariant}
-            whileTap={tapShake}
-            className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-            onClick={() =>
-              setWindow3(window3 === "opened" ? "closed" : "opened")
-            }
-          >
-            Hello Dog
-          </motion.button>
+          {stories && (
+            <NavMenu
+              links={stories.docs.map((story) => ({
+                route: `/stories/${story.id}`,
+                name: story.data().title,
+              }))}
+              setSideBarControl={setAnimateState}
+              sideBarControl={animateState}
+            />
+          )}
         </motion.div>
         <motion.div className="absolute left-0 top-0 w-8 h-8 cursor-pointer">
           <img
@@ -131,15 +89,99 @@ export const SideBar = () => {
           />
         </motion.div>
       </GlitchDiv>
+    </div>
+  );
+};
+
+export const NavMenu = ({
+  links,
+  sideBarControl,
+  setSideBarControl,
+}: {
+  links: { route: string; name?: string }[];
+  sideBarControl: "opened" | "closed";
+  setSideBarControl: (value: "opened" | "closed") => void;
+}) => {
+  const isMedium = useIsMd();
+  const [animateState, setAnimateState] = useState<"opened" | "closed">(
+    "closed"
+  );
+
+  const navigate = useNavigate();
+
+  const itemVariant = {
+    closed: {
+      opacity: 0,
+      transition: {
+        duration: 0,
+      },
+    },
+    opened: {
+      opacity: 1,
+    },
+  };
+
+  const tapShake = {
+    translateX: isMedium ? "0.5rem" : 0,
+    translateY: isMedium ? 0 : "0.5rem",
+    rotate: 0.25,
+    transition: {
+      type: "spring",
+      damping: 1,
+      mass: 0.1,
+      stiffness: 1000,
+    },
+  };
+
+  const itemParentVariant = {
+    opened: {
+      transition: {
+        delayChildren: 0,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  return (
+    <div>
+      <motion.button
+        variants={itemVariant}
+        whileTap={tapShake}
+        className="mt-20 m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+        onClick={() =>
+          setAnimateState(animateState === "opened" ? "closed" : "opened")
+        }
+      >
+        Stories
+      </motion.button>
       {isMedium && (
         <GlitchDiv
-          width={10}
+          width={5}
           height={10}
           left={5}
-          top={3.5}
-          animateState={window3}
+          top={1}
+          animateState={animateState}
         >
-          <></>
+          {links.map((link) => {
+            return (
+              <motion.div
+                className="relative w-full h-full overflow-hidden justify-center text-center"
+                variants={itemParentVariant}
+              >
+                <motion.button
+                  variants={itemVariant}
+                  className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+                  onClick={() => {
+                    setAnimateState("closed");
+                    setSideBarControl("closed");
+                    navigate(link.route);
+                  }}
+                >
+                  {link.name ?? link.route}
+                </motion.button>
+              </motion.div>
+            );
+          })}
         </GlitchDiv>
       )}
     </div>
