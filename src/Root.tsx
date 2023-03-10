@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { AnimatedPage } from "./AnimatedPage";
 import { CommandPrompt } from "./CommandPrompt";
-import { GlitchDiv } from "./GlitchDiv";
+import { SideBar } from "./SideBar";
 
 function Root() {
   const [showCommandPompt, setShowCommandPrompt] = useState(false);
@@ -30,7 +30,7 @@ function Root() {
       {showCommandPompt && (
         <CommandPrompt killFunction={() => setShowCommandPrompt(false)} />
       )}
-      <GlitchDiv />
+      <SideBar />
       <Outlet />
     </div>
   );
