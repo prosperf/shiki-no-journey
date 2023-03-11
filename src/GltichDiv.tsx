@@ -93,8 +93,8 @@ export const GlitchDiv = ({
   const rootVariant = isMedium
     ? {
         closed: {
-          width: "2rem",
-          height: "2rem",
+          width: "0rem",
+          height: "0rem",
           translateX: left ? `${left * 3.5}rem` : "0rem",
           translateY: top ? `${top * 3.5}rem` : "0rem",
           transition: { type: "linear" },
@@ -111,8 +111,8 @@ export const GlitchDiv = ({
       }
     : {
         closed: {
-          width: "2rem",
-          height: "2rem",
+          width: "0rem",
+          height: "0rem",
           transition: { type: "linear" },
         },
         opened: {
