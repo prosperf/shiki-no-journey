@@ -3,7 +3,7 @@ import { useState } from "react";
 import menuGlitchImage from "./assets/menuglitch.png";
 import menuGlitchGif from "./assets/glitchmenu.gif";
 import { ReactComponent as Close } from "./assets/close.svg";
-import { useIsMd } from "./hooks/utils";
+import { useIsSm } from "./hooks/utils";
 import { useNavigate } from "react-router-dom";
 import { gridGenerator, scrambleArray } from "../utils/randomizers";
 
@@ -24,9 +24,9 @@ export const GlitchDiv = ({
   top?: number;
   baseDelay?: number;
 }) => {
-  const isMedium = useIsMd();
+  const isSmall = useIsSm();
 
-  const boxVariant = isMedium
+  const boxVariant = isSmall
     ? {
         closed: {
           opacity: 0,
@@ -71,12 +71,22 @@ export const GlitchDiv = ({
         opened: ({ x, y, delayMul, blink }: any) => ({
           translateX: `${20 * x}vw`,
           translateY: `${20 * y}vw`,
-          opacity: Math.floor((25 / ((x + 1) * (y + 1))) * Math.random() * 20),
+          opacity: Math.floor(
+            (((width ? width : 20) * (height ? height : 20)) /
+              ((x + 1) * (y + 1))) *
+              10 *
+              Math.random()
+          ),
           transition: {
             opacity: {
               repeat: Infinity,
               duration: Math.floor(
-                Math.pow(((x + 1) * (y + 1)) / 20, 2) * Math.random()
+                Math.pow(
+                  (((x + 1) * (y + 1)) /
+                    ((width ? width : 20) * (height ? height : 20))) *
+                    5,
+                  2
+                ) * Math.random()
               ),
               delay: delayMul * 0.01 + (baseDelay ? baseDelay : 0),
               type: "linear",
@@ -90,7 +100,7 @@ export const GlitchDiv = ({
         }),
       };
 
-  const rootVariant = isMedium
+  const rootVariant = isSmall
     ? {
         closed: {
           width: "0rem",

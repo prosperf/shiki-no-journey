@@ -4,14 +4,24 @@ import { animate, delay, motion, Variant } from "framer-motion";
 import { useEffect, useState } from "react";
 import menuGlitchImage from "./assets/menuglitch.png";
 import menuGlitchGif from "./assets/glitchmenu.gif";
-import { useIsMd } from "./hooks/utils";
+import { useIsSm } from "./hooks/utils";
 import { useNavigate } from "react-router-dom";
 import { GlitchDiv } from "./GltichDiv";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  DocumentData,
+  FirestoreError,
+  QuerySnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { auth, db } from "../utils/firebase";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useIdToken } from "react-firebase-hooks/auth";
+import { IconContext } from "react-icons";
+import { StoryContainer } from "./Stories/StoryContainer";
 
 const itemVariant = {
   closed: {
@@ -35,7 +45,7 @@ export const SideBar = () => {
     collection(db, "stories")
   );
 
-  const isMedium = useIsMd();
+  const isSmall = useIsSm();
 
   const navigate = useNavigate();
 
@@ -78,8 +88,8 @@ export const SideBar = () => {
   };
 
   const tapShake = {
-    translateX: isMedium ? "0.5rem" : 0,
-    translateY: isMedium ? 0 : "0.5rem",
+    translateX: isSmall ? "0.5rem" : 0,
+    translateY: isSmall ? 0 : "0.5rem",
     rotate: 0.25,
     transition: {
       type: "spring",
@@ -107,7 +117,7 @@ export const SideBar = () => {
     <div>
       <GlitchDiv animateState={animateState} width={5} baseDelay={0.6}>
         <motion.div
-          className="relative w-full h-full overflow-hidden justify-center text-center"
+          className="relative w-full h-full overflow-hidden justify-center align-center text-center"
           variants={itemParentVariant}
         >
           <motion.button
@@ -116,6 +126,7 @@ export const SideBar = () => {
             className="mt-20 m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
             onClick={() => {
               closeAllNavMenus();
+              if (!isSmall) setAnimateState("closed");
               navigate("/");
             }}
           >
@@ -138,17 +149,15 @@ export const SideBar = () => {
                 }))}
                 enabled={navMenuStoriesOn}
                 setEnabled={setNavMenuStoriesOn}
+                setParentState={setAnimateState}
                 tailElement={
                   showAddStoryButton && (
-                    <motion.button
-                      variants={itemVariant}
+                    <AddStory
+                      stories={stories}
+                      storiesLoading={storiesLoading}
+                      storiesError={storiesError}
                       whileTap={tapShake}
-                      className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-                    >
-                      <div className="flex justify-center">
-                        <AiOutlinePlus className="m-2" />
-                      </div>
-                    </motion.button>
+                    />
                   )
                 }
               />
@@ -189,13 +198,15 @@ export const NavMenu = ({
   enabled,
   setEnabled,
   tailElement,
+  setParentState,
 }: {
   links: { route: string; name?: string }[];
   enabled: boolean;
   setEnabled: (x: boolean) => void;
   tailElement?: React.ReactNode;
+  setParentState: (x: "opened" | "closed") => void;
 }) => {
-  const isMedium = useIsMd();
+  const isSmall = useIsSm();
 
   const navigate = useNavigate();
 
@@ -210,37 +221,109 @@ export const NavMenu = ({
 
   return (
     <div>
-      {isMedium && (
-        <GlitchDiv
-          width={5}
-          height={10}
-          left={5}
-          top={2.25}
-          animateState={enabled ? "opened" : "closed"}
+      <GlitchDiv
+        width={5}
+        height={10}
+        left={5}
+        top={2.25}
+        animateState={enabled ? "opened" : "closed"}
+      >
+        <motion.div
+          className="relative w-full h-full overflow-hidden justify-center text-center"
+          variants={itemParentVariant}
         >
-          <motion.div
-            className="relative w-full h-full overflow-hidden justify-center text-center"
-            variants={itemParentVariant}
+          {links.map((link, index) => {
+            return (
+              <motion.button
+                variants={itemVariant}
+                className=" mt-20 sm:mt-4 m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+                onClick={() => {
+                  setEnabled(false);
+                  if (!isSmall) setParentState("closed");
+                  navigate(link.route);
+                }}
+                key={`NavMenu-${index}`}
+              >
+                {link.name ?? link.route}
+              </motion.button>
+            );
+          })}
+          {tailElement}
+        </motion.div>
+        {!isSmall && enabled && (
+          <motion.button
+            className="absolute m-0.5 top-7 left-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.5 } }}
+            onClick={() => {
+              setEnabled(false);
+            }}
           >
-            {links.map((link, index) => {
-              return (
-                <motion.button
-                  variants={itemVariant}
-                  className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
-                  onClick={() => {
-                    setEnabled(false);
-                    navigate(link.route);
-                  }}
-                  key={`NavMenu-${index}`}
-                >
-                  {link.name ?? link.route}
-                </motion.button>
-              );
-            })}
-            {tailElement}
-          </motion.div>
-        </GlitchDiv>
-      )}
+            <IconContext.Provider value={{ size: "1.7rem", color: "white" }}>
+              <AiOutlineArrowLeft className="stroke-slate " />
+            </IconContext.Provider>
+          </motion.button>
+        )}
+      </GlitchDiv>
     </div>
+  );
+};
+
+//TODO: Should add useCollection to redux state since it is always rendered anyways and many components use it
+export const AddStory = ({
+  stories,
+  storiesLoading,
+  storiesError,
+  whileTap,
+}: {
+  stories: QuerySnapshot<DocumentData> | undefined;
+  storiesLoading: boolean;
+  storiesError: FirestoreError | undefined;
+  whileTap: any;
+}) => {
+  const [editMode, setEditMode] = useState(false);
+  const [inputText, setInputText] = useState("");
+
+  const onFormSubmit = (e: any) => {
+    if (inputText === "") {
+      setEditMode(false);
+    } else {
+      setDoc(doc(db, "stories", inputText.toLowerCase().replaceAll(" ", "-")), {
+        title: inputText,
+      });
+      setInputText("");
+      setEditMode(false);
+    }
+
+    e.preventDefault();
+  };
+
+  return !editMode ? (
+    <motion.button
+      variants={itemVariant}
+      whileTap={whileTap}
+      className="m-4 bg-black/10 hover:bg-gray-300/10 w-4/6 border-solid border-white border-2"
+      onClick={() => {
+        setEditMode(true);
+      }}
+    >
+      <div className="flex justify-center">
+        <AiOutlinePlus className="m-2" />
+      </div>
+    </motion.button>
+  ) : (
+    <motion.form
+      variants={itemVariant}
+      onSubmit={onFormSubmit}
+      className="mt-4 m-auto bg-black/10 w-4/6 border-solid border-white border-2 overflow-hidden"
+    >
+      <input
+        className="bg-black"
+        type="text"
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+      />
+      <button type="submit" hidden />
+    </motion.form>
   );
 };

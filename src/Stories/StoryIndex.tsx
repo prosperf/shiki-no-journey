@@ -16,13 +16,16 @@ export const StoryIndex = () => {
   //const [stories, setStories] = useState([""]);
   const [showEditor, setShowEditor] = useState(false);
   const { storyId } = useParams();
-  const [stories, storiesLoading, storiesError] = useCollection(
+  const [entries, entriessLoading, entriesError] = useCollection(
     collection(db, "stories", storyId!, "entries")
+  );
+  const [stories, storiesLoading, storiesError] = useCollection(
+    collection(db, "stories")
   );
 
   useEffect(() => {
-    if (stories && stories.empty)
-      throw new Response("Not Found", { status: 404 });
+    if (stories && stories.docs.findIndex((doc) => doc.id === storyId) === -1)
+      throw new Response("Story Not Found", { status: 404 });
   }, [stories]);
 
   //Tracks user sign in status and if user is an admin or not
@@ -47,15 +50,15 @@ export const StoryIndex = () => {
 
   return (
     <div>
-      {stories &&
-        stories.docs.map((story, index) => (
+      {entries &&
+        entries.docs.map((entry, index) => (
           <StoryContainer key={index}>
             <div
               dangerouslySetInnerHTML={{
-                __html: dompurify.sanitize(story.data().body),
+                __html: dompurify.sanitize(entry.data().body),
               }}
             ></div>
-            {user && user.uid === story.data().users.owner && (
+            {user && user.uid === entry.data().users.owner && (
               <div className="text-right text-cold-red">
                 REPLACE WITH EDIT BUTTON
               </div>
