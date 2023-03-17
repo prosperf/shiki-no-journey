@@ -3,9 +3,9 @@ import { useState } from "react";
 import menuGlitchImage from "./assets/menuglitch.png";
 import menuGlitchGif from "./assets/glitchmenu.gif";
 import { ReactComponent as Close } from "./assets/close.svg";
-import { useIsSm } from "./hooks/utils";
+import { useIsSm } from "../../hooks/utils";
 import { useNavigate } from "react-router-dom";
-import { gridGenerator, scrambleArray } from "../utils/randomizers";
+import { gridGenerator, scrambleArray } from "../../../utils/randomizers";
 
 export const GlitchDiv = ({
   children,

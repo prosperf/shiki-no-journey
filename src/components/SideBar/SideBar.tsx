@@ -2,9 +2,9 @@
 
 import { animate, delay, motion, Variant } from "framer-motion";
 import { useEffect, useState } from "react";
-import menuGlitchImage from "./assets/menuglitch.png";
-import menuGlitchGif from "./assets/glitchmenu.gif";
-import { useIsSm } from "./hooks/utils";
+import menuGlitchImage from "../../assets/menuglitch.png";
+import menuGlitchGif from "../../assets/glitchmenu.gif";
+import { useIsSm } from "../../hooks/utils";
 import { useNavigate } from "react-router-dom";
 import { GlitchDiv } from "./GltichDiv";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -17,11 +17,11 @@ import {
   QuerySnapshot,
   setDoc,
 } from "firebase/firestore";
-import { auth, db } from "../utils/firebase";
+import { auth, db } from "../../../utils/firebase";
 import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { IconContext } from "react-icons";
-import { StoryContainer } from "./Stories/StoryContainer";
+import { StoryContainer } from "../Stories/StoryContainer";
 
 const itemVariant = {
   closed: {
@@ -115,7 +115,7 @@ export const SideBar = () => {
   //NOTE: NOT RESPONSIVE ENOUGH WORKS POORLY AT LOW ZOOM IE 4k
   return (
     <div>
-      <GlitchDiv animateState={animateState} width={5} baseDelay={0.6}>
+      <GlitchDiv animateState={animateState} width={6} baseDelay={0.6}>
         <motion.div
           className="relative w-full h-full overflow-hidden justify-center align-center text-center"
           variants={itemParentVariant}
@@ -224,7 +224,7 @@ export const NavMenu = ({
       <GlitchDiv
         width={5}
         height={10}
-        left={5}
+        left={6}
         top={2.25}
         animateState={enabled ? "opened" : "closed"}
       >

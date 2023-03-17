@@ -14,6 +14,10 @@ module.exports = {
       colors: {
         "cold-red": "#770101",
       },
+      gridTemplateColumns: {
+        // Complex site-specific column configuration
+        home: "auto min(21rem)",
+      },
     },
   },
 };

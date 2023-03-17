@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ReactQuill from "react-quill";
 import { StoryContainer } from "./StoryContainer";
-import "../styles/quill_override.css";
+import "../../styles/quill_override.css";
 import {
   addDoc,
   collection,
@@ -9,7 +9,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
-import { auth, db } from "../../utils/firebase";
+import { auth, db } from "../../../utils/firebase";
 import dompurify from "dompurify";
 import { useAuthState } from "react-firebase-hooks/auth";
 

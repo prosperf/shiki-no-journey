@@ -1,14 +1,14 @@
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { app, auth, db } from "../../utils/firebase";
+import { app, auth, db } from "../../../utils/firebase";
 import dompurify from "dompurify";
 import { StoryContainer } from "./StoryContainer";
 import { StoryCreator } from "./StoryCreator";
 import { getAuth, User } from "firebase/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { AnimatedPage } from "../AnimatedPage";
+import { AnimatedPage } from "../../AnimatedPage";
 
 //NOTE: Need to catch when a story does not exist
 
@@ -49,7 +49,7 @@ export const StoryIndex = () => {
   });
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center p-8 font-mono">
       {entries &&
         entries.docs.map((entry, index) => (
           <StoryContainer key={index}>
