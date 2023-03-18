@@ -4,8 +4,8 @@ import { animate, delay, motion, Variant } from "framer-motion";
 import { useEffect, useState } from "react";
 import menuGlitchImage from "../../assets/menuglitch.png";
 import menuGlitchGif from "../../assets/glitchmenu.gif";
-import { useIsLg, useIsSm } from "../../hooks/utils";
-import { useNavigate } from "react-router-dom";
+import { useIs2xl, useIsLg, useIsSm, useIsXl } from "../../hooks/utils";
+import { useLocation, useNavigate } from "react-router-dom";
 import { GlitchDiv } from "./GltichDiv";
 import { useCollection } from "react-firebase-hooks/firestore";
 import {
@@ -37,16 +37,22 @@ const itemVariant = {
 
 export const SideBar = () => {
   const isSmall = useIsSm();
-  const isLarge = useIsLg();
+  const isLarge = useIs2xl();
+  const location = useLocation();
   const navigate = useNavigate();
   const [animateState, setAnimateState] = useState<"closed" | "opened">(
-    isLarge ? "opened" : "closed"
+    "closed"
   );
   const [navMenuStoriesOn, setNavMenuStoriesOn] = useState(false);
   const [showAddStoryButton, setShowAddStoryButton] = useState(false);
   const [stories, storiesLoading, storiesError] = useCollection(
     collection(db, "stories")
   );
+
+  useEffect(() => {
+    if (location.pathname === "/" && isLarge)
+      setTimeout(() => setAnimateState("opened"), 1000);
+  }, [location.pathname, isLarge]);
 
   //Tracks user sign in status and if user is an admin or not
   useIdToken(auth, {

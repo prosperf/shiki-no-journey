@@ -1,8 +1,10 @@
 import {
   addDoc,
   collection,
+  query,
   serverTimestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -10,15 +12,13 @@ import { db } from "../../../utils/firebase";
 
 export const HomeIndex = () => {
   const [dailyQuotes, dailyQuotesLoading, dailyQuotesError] = useCollection(
-    collection(db, "daily-quotes")
+    query(collection(db, "daily-quotes"), where("active", "==", true))
   );
   const [dailyQuote, setDailyQuote] = useState("");
 
   useEffect(() => {
     if (dailyQuotes) {
-      setDailyQuote(
-        dailyQuotes.docs.filter((doc) => doc.data().active)[0].data().entry
-      );
+      setDailyQuote(dailyQuotes.docs[0].data().entry);
     }
   }, [dailyQuotes]);
 
