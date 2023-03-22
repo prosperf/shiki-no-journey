@@ -15,9 +15,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 export const StoryCreator = () => {
   const [quillText, setQuillText] = useState("");
-  const [month, setMonth] = useState(0);
-  const [day, setDay] = useState(0);
-  const [year, setYear] = useState(0);
+  const [storyDate, setStoryDate] = useState({month: 0, day: 0, year: 0})
+  const [releaseDate, setReleaseDate] = useState({month: 0, day: 0, year: 0})
+  const [releaseNow, setReleaseNow] = useState(true)
   const { storyId } = useParams();
   const [user] = useAuthState(auth);
 
@@ -55,8 +55,9 @@ export const StoryCreator = () => {
   const onFormSubmit = (e: any) => {
     addDoc(collection(db, "stories", storyId!, "entries"), {
       body: dompurify.sanitize(quillText),
-      date: month !== 0 && day !== 0 ? new Date(year, month - 1, day) : null,
+      date: storyDate.month !== 0 && storyDate.day !== 0 ? new Date(storyDate.year, storyDate.month - 1, storyDate.day) : null,
       timestamp: serverTimestamp(),
+      releaseDate: !releaseNow && releaseDate.month !== 0 && releaseDate.day !== 0 ? new Date(releaseDate.year, releaseDate.month - 1, releaseDate.day) : new Date(),
       users: {
         owner: user!.uid,
       },
@@ -64,9 +65,8 @@ export const StoryCreator = () => {
       .then((response) => {
         console.log(response);
         setQuillText("");
-        setDay(0);
-        setMonth(0);
-        setYear(0);
+        setStoryDate({month: 0, day: 0, year: 0})
+        setReleaseDate({month: 0, day: 0, year: 0})
       })
       .catch((error) => {
         console.log(error);
@@ -84,12 +84,13 @@ export const StoryCreator = () => {
         formats={formats}
       />
       <form className="bg-transparent" onSubmit={onFormSubmit}>
+        <label>Story Date:</label>
         <label className="m-5">
           month
           <select
             className="bg-black"
-            value={month}
-            onChange={(e) => setMonth(Number(e.target.value))}
+            value={storyDate.month}
+            onChange={(e) => setStoryDate({...storyDate, month: Number(e.target.value)})}
           >
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((value) => (
               <option key={`month-option-${value}`} value={value}>
@@ -103,8 +104,8 @@ export const StoryCreator = () => {
           day
           <select
             className="bg-black"
-            value={day}
-            onChange={(e) => setDay(Number(e.target.value))}
+            value={storyDate.day}
+            onChange={(e) => setStoryDate({...storyDate, day: Number(e.target.value)})}
           >
             {[
               0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -119,11 +120,72 @@ export const StoryCreator = () => {
         <label className="m-5">
           {"year "}
           <input
-            className="bg-transparent w-max-xs"
+            className="bg-transparent w-[4rem]"
             name="year"
             type="number"
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
+            value={storyDate.year}
+            onChange={(e) => setStoryDate({...storyDate, year: Number(e.target.value)})}
+          />
+        </label>
+        <button className="hover:text-cold-red" type="submit">
+          Submit
+        </button>
+        <br/>
+        
+        <label>Release Date:</label>
+        <label className="m-5">
+          month
+          <select
+            className="bg-black"
+            value={releaseDate.month}
+            disabled={releaseNow}
+            onChange={(e) => setReleaseDate({...releaseDate, month: Number(e.target.value)})}
+          >
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((value) => (
+              <option key={`month-option-${value}`} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="m-5">
+          day
+          <select
+            className="bg-black"
+            value={releaseDate.day}
+            disabled={releaseNow}
+            onChange={(e) => setReleaseDate({...releaseDate, day: Number(e.target.value)})}
+          >
+            {[
+              0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+              19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            ].map((value) => (
+              <option key={`day-option-${value}`} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="m-5">
+          {"year "}
+          <input
+            className="bg-transparent w-[4rem]"
+            name="year"
+            type="number"
+            disabled={releaseNow}
+            value={releaseDate.year}
+            onChange={(e) => setReleaseDate({...releaseDate, year: Number(e.target.value)})}
+          />
+        </label>
+        <label className="m-5">
+          {"release now "}
+          <input
+          className="accent-cold-red"
+          name="release now"
+          type="checkbox"
+          checked={releaseNow}
+          onChange={(e) => setReleaseNow(!releaseNow)}
           />
         </label>
         <button className="hover:text-cold-red" type="submit">
