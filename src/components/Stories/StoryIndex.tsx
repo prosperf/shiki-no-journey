@@ -1,23 +1,26 @@
-import { addDoc, collection, getDocs, query } from "firebase/firestore";
+import { collection, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { app, auth, db } from "../../../utils/firebase";
+import { auth, db } from "../../../utils/firebase";
 import dompurify from "dompurify";
 import { StoryContainer } from "./StoryContainer";
 import { StoryCreator } from "./StoryCreator";
-import { getAuth, User } from "firebase/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { AnimatedPage } from "../../AnimatedPage";
 
-//NOTE: Need to catch when a story does not exist
+//Initialize on each refresh for query
+const date = new Date();
 
 export const StoryIndex = () => {
   //const [stories, setStories] = useState([""]);
+
   const [showEditor, setShowEditor] = useState(false);
   const { storyId } = useParams();
   const [entries, entriessLoading, entriesError] = useCollection(
-    collection(db, "stories", storyId!, "entries")
+    query(
+      collection(db, "stories", storyId!, "entries"),
+      where("releaseDate", "<=", date)
+    )
   );
   const [stories, storiesLoading, storiesError] = useCollection(
     collection(db, "stories")

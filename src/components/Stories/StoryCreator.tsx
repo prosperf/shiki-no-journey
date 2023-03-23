@@ -57,7 +57,7 @@ export const StoryCreator = () => {
       body: dompurify.sanitize(quillText),
       date: storyDate.month !== 0 && storyDate.day !== 0 ? new Date(storyDate.year, storyDate.month - 1, storyDate.day) : null,
       timestamp: serverTimestamp(),
-      releaseDate: !releaseNow && releaseDate.month !== 0 && releaseDate.day !== 0 ? new Date(releaseDate.year, releaseDate.month - 1, releaseDate.day) : new Date(),
+      releaseDate: !releaseNow && releaseDate.month !== 0 && releaseDate.day !== 0 ? new Date(releaseDate.year, releaseDate.month - 1, releaseDate.day) : Date.now(),
       users: {
         owner: user!.uid,
       },
