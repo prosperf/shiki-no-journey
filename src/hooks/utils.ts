@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);

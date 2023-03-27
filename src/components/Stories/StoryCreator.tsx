@@ -15,9 +15,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 export const StoryCreator = () => {
   const [quillText, setQuillText] = useState("");
-  const [storyDate, setStoryDate] = useState({month: 0, day: 0, year: 0})
-  const [releaseDate, setReleaseDate] = useState({month: 0, day: 0, year: 0})
-  const [releaseNow, setReleaseNow] = useState(true)
+  const [storyDate, setStoryDate] = useState({ month: 0, day: 0, year: 0 });
+  const [releaseDate, setReleaseDate] = useState({ month: 0, day: 0, year: 0 });
+  const [releaseNow, setReleaseNow] = useState(true);
   const { storyId } = useParams();
   const [user] = useAuthState(auth);
 
@@ -55,9 +55,15 @@ export const StoryCreator = () => {
   const onFormSubmit = (e: any) => {
     addDoc(collection(db, "stories", storyId!, "entries"), {
       body: dompurify.sanitize(quillText),
-      date: storyDate.month !== 0 && storyDate.day !== 0 ? new Date(storyDate.year, storyDate.month - 1, storyDate.day) : null,
+      date:
+        storyDate.month !== 0 && storyDate.day !== 0
+          ? new Date(storyDate.year, storyDate.month - 1, storyDate.day)
+          : null,
       timestamp: serverTimestamp(),
-      releaseDate: !releaseNow && releaseDate.month !== 0 && releaseDate.day !== 0 ? new Date(releaseDate.year, releaseDate.month - 1, releaseDate.day) : Date.now(),
+      releaseDate:
+        !releaseNow && releaseDate.month !== 0 && releaseDate.day !== 0
+          ? new Date(releaseDate.year, releaseDate.month - 1, releaseDate.day)
+          : Date.now(),
       users: {
         owner: user!.uid,
       },
@@ -65,8 +71,8 @@ export const StoryCreator = () => {
       .then((response) => {
         console.log(response);
         setQuillText("");
-        setStoryDate({month: 0, day: 0, year: 0})
-        setReleaseDate({month: 0, day: 0, year: 0})
+        setStoryDate({ month: 0, day: 0, year: 0 });
+        setReleaseDate({ month: 0, day: 0, year: 0 });
       })
       .catch((error) => {
         console.log(error);
@@ -90,7 +96,9 @@ export const StoryCreator = () => {
           <select
             className="bg-black"
             value={storyDate.month}
-            onChange={(e) => setStoryDate({...storyDate, month: Number(e.target.value)})}
+            onChange={(e) =>
+              setStoryDate({ ...storyDate, month: Number(e.target.value) })
+            }
           >
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((value) => (
               <option key={`month-option-${value}`} value={value}>
@@ -105,7 +113,9 @@ export const StoryCreator = () => {
           <select
             className="bg-black"
             value={storyDate.day}
-            onChange={(e) => setStoryDate({...storyDate, day: Number(e.target.value)})}
+            onChange={(e) =>
+              setStoryDate({ ...storyDate, day: Number(e.target.value) })
+            }
           >
             {[
               0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -124,14 +134,13 @@ export const StoryCreator = () => {
             name="year"
             type="number"
             value={storyDate.year}
-            onChange={(e) => setStoryDate({...storyDate, year: Number(e.target.value)})}
+            onChange={(e) =>
+              setStoryDate({ ...storyDate, year: Number(e.target.value) })
+            }
           />
         </label>
-        <button className="hover:text-cold-red" type="submit">
-          Submit
-        </button>
-        <br/>
-        
+        <br />
+
         <label>Release Date:</label>
         <label className="m-5">
           month
@@ -139,7 +148,9 @@ export const StoryCreator = () => {
             className="bg-black"
             value={releaseDate.month}
             disabled={releaseNow}
-            onChange={(e) => setReleaseDate({...releaseDate, month: Number(e.target.value)})}
+            onChange={(e) =>
+              setReleaseDate({ ...releaseDate, month: Number(e.target.value) })
+            }
           >
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((value) => (
               <option key={`month-option-${value}`} value={value}>
@@ -155,7 +166,9 @@ export const StoryCreator = () => {
             className="bg-black"
             value={releaseDate.day}
             disabled={releaseNow}
-            onChange={(e) => setReleaseDate({...releaseDate, day: Number(e.target.value)})}
+            onChange={(e) =>
+              setReleaseDate({ ...releaseDate, day: Number(e.target.value) })
+            }
           >
             {[
               0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -175,17 +188,19 @@ export const StoryCreator = () => {
             type="number"
             disabled={releaseNow}
             value={releaseDate.year}
-            onChange={(e) => setReleaseDate({...releaseDate, year: Number(e.target.value)})}
+            onChange={(e) =>
+              setReleaseDate({ ...releaseDate, year: Number(e.target.value) })
+            }
           />
         </label>
         <label className="m-5">
           {"release now "}
           <input
-          className="accent-cold-red"
-          name="release now"
-          type="checkbox"
-          checked={releaseNow}
-          onChange={(e) => setReleaseNow(!releaseNow)}
+            className="accent-cold-red"
+            name="release now"
+            type="checkbox"
+            checked={releaseNow}
+            onChange={(e) => setReleaseNow(!releaseNow)}
           />
         </label>
         <button className="hover:text-cold-red" type="submit">
