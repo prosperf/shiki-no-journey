@@ -16,9 +16,26 @@ export const StoryReleaseCountdown = ({
   }, [secondsUntilRelease]);
 
   return (
-    <StoryContainer>
-      {Math.floor(timeLeft / (3600 * 24))}:{Math.floor(timeLeft / 3600) % 24}:
-      {Math.floor(timeLeft / 60) % 60}:{timeLeft % 60}
-    </StoryContainer>
+    <div className="text-center">
+      <h2>Next Release In</h2>
+      <div className="flex text-center justify-center">
+        <div className="mx-4">
+          <p>{Math.floor(timeLeft / (3600 * 24))}</p>
+          <p>Days</p>
+        </div>
+        <div className="mx-4">
+          <p>{Math.floor(timeLeft / 3600) % 24}</p>
+          <p>Hours</p>
+        </div>
+        <div className="mx-4">
+          <p>{Math.floor(timeLeft / 60) % 60}</p>
+          <p>Minutes</p>
+        </div>
+        <div className="mx-4">
+          <p>{timeLeft % 60}</p>
+          <p>Seconds</p>
+        </div>
+      </div>
+    </div>
   );
 };

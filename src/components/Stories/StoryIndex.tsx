@@ -25,22 +25,26 @@ export const StoryIndex = () => {
   const [upcomingReleaseDate, setUpcomingReleaseDate] = useState<Date>();
 
   useEffect(() => {
-    if (stories && stories.docs.findIndex((doc) => doc.id === storyId) === -1)
-      throw new Response("Story Not Found", { status: 404 });
-
-    if (stories) {
-      let releaseDates = stories.docs
-        .find((doc) => doc.id === storyId)
-        ?.data()
-        .releaseDates.map((releaseDate: Timestamp) => releaseDate.toDate());
-      if (releaseDates.length !== 0) {
-        let upcomingReleaseDate = releaseDates.find(
-          (date: Date) => date > currentDateRef.current
-        );
-        if (upcomingReleaseDate) setUpcomingReleaseDate(upcomingReleaseDate);
-      }
+    if (!stories) {
+      setUpcomingReleaseDate(undefined);
+      return;
     }
-  }, [stories]);
+
+    if (stories.docs.findIndex((doc) => doc.id === storyId) === -1)
+      throw new Response("Story Not Found", { status: 404 });
+    let releaseDates = stories.docs
+      .find((doc) => doc.id === storyId)
+      ?.data()
+      .releaseDates.map((releaseDate: Timestamp) => releaseDate.toDate());
+    if (releaseDates.length !== 0) {
+      let upcomingReleaseDate = releaseDates.find(
+        (date: Date) => date > currentDateRef.current
+      );
+      if (upcomingReleaseDate) setUpcomingReleaseDate(upcomingReleaseDate);
+    } else {
+      setUpcomingReleaseDate(undefined);
+    }
+  }, [stories, storyId]);
 
   //Tracks user sign in status and if user is an admin or not
   const [user] = useIdToken(auth, {
@@ -81,7 +85,7 @@ export const StoryIndex = () => {
         ))}
 
       {showEditor && <StoryCreator />}
-      {upcomingReleaseDate && (
+      {upcomingReleaseDate !== undefined && (
         <StoryReleaseCountdown
           secondsUntilRelease={Math.floor(
             (upcomingReleaseDate.getTime() - currentDateRef.current.getTime()) /
