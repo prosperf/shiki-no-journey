@@ -8,6 +8,7 @@ import { StoryCreator } from "./StoryCreator";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { StoryReleaseCountdown } from "./StoryReleaseCountdown";
+import GlitchyLoader from "../Glitch";
 
 export const StoryIndex = () => {
   const currentDateRef = useRef(new Date());
@@ -68,6 +69,11 @@ export const StoryIndex = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-8 font-mono">
+      {entriessLoading && (
+        <div className="m-20">
+          <GlitchyLoader size={75} gap={2} count={5} />
+        </div>
+      )}
       {entries &&
         entries.docs.map((entry, index) => (
           <StoryContainer key={index}>
